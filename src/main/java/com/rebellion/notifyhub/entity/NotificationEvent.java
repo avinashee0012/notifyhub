@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(name = "notification_events")
-public class NotificationEvent {
+public class NotificationEvent extends BaseEntity{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
