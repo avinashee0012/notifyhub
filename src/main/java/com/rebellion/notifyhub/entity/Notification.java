@@ -2,6 +2,7 @@ package com.rebellion.notifyhub.entity;
 
 import com.rebellion.notifyhub.entity.enums.NotificationStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,8 +28,10 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String title;
     
+    @Column(nullable = false)
     private String message;
     
     private String type;
