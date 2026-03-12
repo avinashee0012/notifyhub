@@ -26,4 +26,13 @@ public class NotificationPreference extends BaseEntity{
     private boolean emailEnabled;
     
     private boolean pushEnabled;
+
+    // SETTERS
+    public void updateEmailPreference(boolean status){
+        emailEnabled = status;
+    }
+
+    public void updatePushPreference(boolean status){
+        pushEnabled = status;
+    }
 }
