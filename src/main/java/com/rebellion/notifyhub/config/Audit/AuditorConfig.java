@@ -1,4 +1,4 @@
-package com.rebellion.notifyhub.config.Audit;
+package com.rebellion.notifyhub.config.audit;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
