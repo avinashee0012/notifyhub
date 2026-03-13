@@ -28,8 +28,8 @@ public class NotificationPreferenceServiceImpl implements NotificationPreference
     @Transactional
     public PreferenceResponseDto updatePreferences(Long userId, PreferenceUpdateDto request) {
         NotificationPreference preference = notificationPreferenceRepo.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("Preference not found"));
-        preference.updateEmailPreference(request.isEmailEnabled());
-        preference.updatePushPreference(request.isPushEnabled());
+        preference.updateEmailPreference(request.getEmailEnabled());
+        preference.updatePushPreference(request.getPushEnabled());
         notificationPreferenceRepo.save(preference);
         return new PreferenceResponseDto(preference.isEmailEnabled(), preference.isPushEnabled());
     }

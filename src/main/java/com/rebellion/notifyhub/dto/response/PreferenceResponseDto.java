@@ -1,11 +1,9 @@
 package com.rebellion.notifyhub.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Value;
 
-@Getter
-@AllArgsConstructor
+@Value // Makes the class final and fields private final
 public class PreferenceResponseDto {
-    private final boolean emailEnabled;
-    private final boolean pushEnabled;
+    boolean emailEnabled;
+    boolean pushEnabled;
 }

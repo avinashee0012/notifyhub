@@ -1,13 +1,18 @@
 package com.rebellion.notifyhub.dto.request;
 
-import lombok.Getter;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class PreferenceUpdateDto {
-    private boolean emailEnabled;
-    private boolean pushEnabled; 
+
+    @NotNull(message = "Email preference status is required")
+    private Boolean emailEnabled;
+
+    @NotNull(message = "Push preference status is required")
+    private Boolean pushEnabled;
 }
