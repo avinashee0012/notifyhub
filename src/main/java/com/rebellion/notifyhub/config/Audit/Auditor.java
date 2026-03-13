@@ -1,4 +1,4 @@
-package com.rebellion.notifyhub.config.Audit;
+package com.rebellion.notifyhub.config.audit;
 
 import java.util.Optional;
 
