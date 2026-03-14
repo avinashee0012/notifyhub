@@ -10,10 +10,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.rebellion.notifyhub.dto.request.PreferenceUpdateDto;
 import com.rebellion.notifyhub.dto.response.PreferenceResponseDto;
 import com.rebellion.notifyhub.entity.NotificationPreference;
+import com.rebellion.notifyhub.entity.User;
 import com.rebellion.notifyhub.repository.NotificationPreferenceRepo;
 import com.rebellion.notifyhub.service.impl.NotificationPreferenceServiceImpl;
 
@@ -28,37 +30,34 @@ public class NotificationPreferenceServiceTest {
 
     @Test
     void shouldReturnPreferenceWhenExists() {
-        Long userId = 1L;
-        NotificationPreference pref = new NotificationPreference();
-        pref.updateEmailPreference(true);
+        User user = new User("user@email.com", "User");
+        ReflectionTestUtils.setField(user, "id", 1L); 
+
+        NotificationPreference pref = new NotificationPreference(user);
         pref.updatePushPreference(false);
 
-        when(notificationPreferenceRepo.findByUserId(userId)).thenReturn(Optional.of(pref));
+        when(notificationPreferenceRepo.findByUserId(user.getId())).thenReturn(Optional.of(pref));
 
-        PreferenceResponseDto response = notificationPreferenceService.getPreferences(userId);
+        PreferenceResponseDto response = notificationPreferenceService.getPreferences(user.getId());
 
+        assertNotNull(response);
         assertTrue(response.isEmailEnabled());
         assertFalse(response.isPushEnabled());
     }
 
     @Test
     void shouldUpdatePreference() {
-        Long userId = 1L;
+        User user = new User("user@email.com", "User");
+        ReflectionTestUtils.setField(user, "id", 1L); 
 
-        NotificationPreference pref = new NotificationPreference();
-        pref.updateEmailPreference(true);
-        pref.updatePushPreference(true);
+        NotificationPreference pref = new NotificationPreference(user);
+        PreferenceUpdateDto dto = new PreferenceUpdateDto(false, true);
 
-        PreferenceUpdateDto dto = new PreferenceUpdateDto();
-        dto.setEmailEnabled(false);
-        dto.setPushEnabled(true);
+        when(notificationPreferenceRepo.findByUserId(user.getId())).thenReturn(Optional.of(pref));
 
-        when(notificationPreferenceRepo.findByUserId(userId)).thenReturn(Optional.of(pref));
-
-        notificationPreferenceService.updatePreferences(userId, dto);
-
-        verify(notificationPreferenceRepo).save(pref);
+        notificationPreferenceService.updatePreferences(user.getId(), dto);
 
         assertFalse(pref.isEmailEnabled());
+        assertTrue(pref.isPushEnabled());
     }
 }
