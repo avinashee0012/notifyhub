@@ -26,14 +26,12 @@ public class NotificationPreference extends BaseEntity{
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
     
-    private boolean emailEnabled;
+    private boolean emailEnabled = true;
     
-    private boolean pushEnabled;
+    private boolean pushEnabled = true;
 
     public NotificationPreference(User user) {
         this.user = user;
-        this.emailEnabled = true;
-        this.pushEnabled = true;
     }
 
     // SETTERS
@@ -43,5 +41,9 @@ public class NotificationPreference extends BaseEntity{
 
     public void updatePushPreference(boolean status){
         pushEnabled = status;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

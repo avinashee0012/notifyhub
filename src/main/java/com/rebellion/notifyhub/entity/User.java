@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Notification> notifications;
+    private List<Notification> notifications = new ArrayList<>();;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private NotificationPreference preference;
@@ -42,7 +42,10 @@ public class User extends BaseEntity {
     public User(String email, String name) {
         this.email = email;
         this.name = name;
-        this.notifications = new ArrayList<>();
-        this.preference = new NotificationPreference();
+    }
+
+    public void setPreference(NotificationPreference preference) {
+        this.preference = preference;
+        preference.setUser(this);
     }
 }

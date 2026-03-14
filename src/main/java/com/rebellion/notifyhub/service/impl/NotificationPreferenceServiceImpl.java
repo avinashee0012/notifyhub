@@ -30,7 +30,6 @@ public class NotificationPreferenceServiceImpl implements NotificationPreference
         NotificationPreference preference = notificationPreferenceRepo.findByUserId(userId).orElseThrow(() -> new EntityNotFoundException("Preference not found"));
         preference.updateEmailPreference(request.getEmailEnabled());
         preference.updatePushPreference(request.getPushEnabled());
-        notificationPreferenceRepo.save(preference);
         return new PreferenceResponseDto(preference.isEmailEnabled(), preference.isPushEnabled());
     }
     
