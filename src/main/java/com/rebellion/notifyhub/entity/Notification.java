@@ -13,11 +13,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "notifications")
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // for jpa
 public class Notification extends BaseEntity {
     
     @Id
@@ -38,4 +41,11 @@ public class Notification extends BaseEntity {
     
     @Enumerated(EnumType.STRING)
     private NotificationStatus status;
+
+    public Notification(User user, String title, String message, String type) {
+        this.user = user;
+        this.title = title;
+        this.message = message;
+        this.type = type;
+    }
 }

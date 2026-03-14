@@ -8,11 +8,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "notification_preferences")
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // for jpa
 public class NotificationPreference extends BaseEntity{
 
     @Id
@@ -26,6 +29,12 @@ public class NotificationPreference extends BaseEntity{
     private boolean emailEnabled;
     
     private boolean pushEnabled;
+
+    public NotificationPreference(User user) {
+        this.user = user;
+        this.emailEnabled = true;
+        this.pushEnabled = true;
+    }
 
     // SETTERS
     public void updateEmailPreference(boolean status){
