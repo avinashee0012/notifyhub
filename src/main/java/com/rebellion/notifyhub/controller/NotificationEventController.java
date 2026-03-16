@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rebellion.notifyhub.dto.request.NotificationEventRequestDto;
 import com.rebellion.notifyhub.service.NotificationEventService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +21,7 @@ public class NotificationEventController {
     private final NotificationEventService notificationEventService;
 
     @PostMapping
-    public ResponseEntity<Void> createEvent(@RequestBody NotificationEventRequestDto request) {
+    public ResponseEntity<Void> createEvent(@Valid @RequestBody NotificationEventRequestDto request) {
         notificationEventService.ingestEvent(request);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
