@@ -13,6 +13,7 @@ import com.rebellion.notifyhub.dto.request.PreferenceUpdateDto;
 import com.rebellion.notifyhub.dto.response.PreferenceResponseDto;
 import com.rebellion.notifyhub.service.NotificationPreferenceService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class NotificationPreferenceController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<PreferenceResponseDto> updateNotificationPreferences(@PathVariable Long userId, @RequestBody PreferenceUpdateDto request){
+    public ResponseEntity<PreferenceResponseDto> updateNotificationPreferences(@PathVariable Long userId, @Valid @RequestBody PreferenceUpdateDto request){
         return ResponseEntity.status(HttpStatus.OK).body(notificationPreferenceService.updatePreferences(userId, request));
     }
 }
