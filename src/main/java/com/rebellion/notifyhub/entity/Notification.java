@@ -40,7 +40,7 @@ public class Notification extends BaseEntity {
     private String type;
     
     @Enumerated(EnumType.STRING)
-    private NotificationStatus status;
+    private NotificationStatus status = NotificationStatus.PENDING;
 
     public Notification(User user, String title, String message, String type) {
         this.user = user;

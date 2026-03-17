@@ -23,13 +23,17 @@ public class NotificationEvent extends BaseEntity{
 
     @Column(nullable = false)
     private String eventType;
+	
+	@Column(nullable = false)
+	private Long userId;
 
     @Lob
     @Column(nullable = false)
     private String payload;
 
-    public NotificationEvent(String eventType, String payload) {
+    public NotificationEvent(String eventType, Long userId, String payload) {
         this.eventType = eventType;
+		this.userId = userId;
         this.payload = payload;
     }
 }

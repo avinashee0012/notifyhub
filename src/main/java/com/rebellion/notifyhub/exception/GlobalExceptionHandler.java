@@ -12,24 +12,24 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request){
+	@ExceptionHandler({EntityNotFoundException.class})
+    public ResponseEntity<ErrorResponseDto> handleNotFoundException(Exception ex, HttpServletRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request.getPathInfo());
+        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request);
         return ResponseEntity.status(status).body(response);
     }
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request){
+	@ExceptionHandler({MethodArgumentNotValidException.class, CustomInvalidJsonStructure.class})
+    public ResponseEntity<ErrorResponseDto> handleBadRequestException(Exception ex, HttpServletRequest request){
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request.getPathInfo());
+        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request);
         return ResponseEntity.status(status).body(response);
     }
     
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleException(Exception ex, HttpServletRequest request){
+    public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex, HttpServletRequest request){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request.getPathInfo());
+        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request);
         return ResponseEntity.status(status).body(response);
     }
 }
