@@ -48,4 +48,26 @@ public class Notification extends BaseEntity {
         this.message = message;
         this.type = type;
     }
+
+	// SETTERS
+	public void markSent(){
+		if(this.status != NotificationStatus.PENDING){
+			throw new IllegalStateException("Invalid transition: " + this.status.name() + " --> SENT");
+		}
+		this.status = NotificationStatus.SENT;
+	}
+
+	public void markFailed(){
+		if(this.status != NotificationStatus.PENDING){
+			throw new IllegalStateException("Invalid transition: " + this.status.name() + " --> FAILED");
+		}
+		this.status = NotificationStatus.FAILED;
+	}
+
+	public void markRead(){
+		if(this.status != NotificationStatus.SENT || this.status != NotificationStatus.FAILED){
+			throw new IllegalStateException("Invalid transition: " + this.status.name() + " --> READ");
+		}
+		this.status = NotificationStatus.READ;
+	}
 }
