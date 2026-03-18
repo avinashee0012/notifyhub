@@ -25,6 +25,13 @@ public class GlobalExceptionHandler {
         ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request);
         return ResponseEntity.status(status).body(response);
     }
+
+	@ExceptionHandler({IllegalStateException.class})
+    public ResponseEntity<ErrorResponseDto> handleConflictException(Exception ex, HttpServletRequest request){
+        HttpStatus status = HttpStatus.CONFLICT;
+        ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request);
+        return ResponseEntity.status(status).body(response);
+    }
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex, HttpServletRequest request){
