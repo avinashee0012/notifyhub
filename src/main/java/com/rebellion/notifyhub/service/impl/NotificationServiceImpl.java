@@ -2,9 +2,12 @@ package com.rebellion.notifyhub.service.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rebellion.notifyhub.dto.response.NotificationResponseDto;
 import com.rebellion.notifyhub.entity.Notification;
 import com.rebellion.notifyhub.entity.NotificationEvent;
 import com.rebellion.notifyhub.entity.NotificationPreference;
@@ -31,6 +34,33 @@ public class NotificationServiceImpl implements NotificationService{
 		User user = userRepo.findById(event.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
 		Notification notification = new Notification(user, "New Event: " + event.getEventType(), event.getPayload(), event.getEventType());
 		notificationRepo.save(notification);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<NotificationResponseDto> getNotifications(Long userId, Pageable pageable) {
+		if (!userRepo.existsById(userId)) {
+			throw new EntityNotFoundException("User not found");
+		}
+		return notificationRepo.findByUserId(userId, pageable).map(this::toResponseDto);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Page<NotificationResponseDto> getUnreadNotifications(Long userId, Pageable pageable) {
+		if (!userRepo.existsById(userId)) {
+			throw new EntityNotFoundException("User not found");
+		}
+		return notificationRepo.findByUserIdAndStatus(userId, NotificationStatus.SENT, pageable).map(this::toResponseDto);
+	}
+
+	@Override
+	@Transactional
+	public NotificationResponseDto markAsRead(Long notificationId) {
+		Notification notification = notificationRepo.findById(notificationId)
+			.orElseThrow(() -> new EntityNotFoundException("Notification not found"));
+		notification.markRead();
+		return toResponseDto(notification);
 	}
 
 	@Override
@@ -73,6 +103,18 @@ public class NotificationServiceImpl implements NotificationService{
 			"Sending push to userId {}: {}",
 			notification.getUser().getId(),
 			notification.getMessage()
+		);
+	}
+
+	private NotificationResponseDto toResponseDto(Notification notification) {
+		return new NotificationResponseDto(
+			notification.getId(),
+			notification.getUser().getId(),
+			notification.getTitle(),
+			notification.getMessage(),
+			notification.getType(),
+			notification.getStatus(),
+			notification.getCreatedAt()
 		);
 	}
 }
