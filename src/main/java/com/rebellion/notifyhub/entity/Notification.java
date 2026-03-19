@@ -65,7 +65,7 @@ public class Notification extends BaseEntity {
 	}
 
 	public void markRead(){
-		if(this.status != NotificationStatus.SENT || this.status != NotificationStatus.FAILED){
+		if(this.status != NotificationStatus.SENT){
 			throw new IllegalStateException("Invalid transition: " + this.status.name() + " --> READ");
 		}
 		this.status = NotificationStatus.READ;
