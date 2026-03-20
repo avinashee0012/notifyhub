@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotifyHub Test</title>
+
+    <style>
+        #loader {
+            font-size: 18px;
+            color: blue;
+        }
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>NotifyHub: Push Notification Test</h1>
+
+    <p id="loader">Waiting for notification...</p>
+    <p id="message"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+    <script>
+        const loader = document.getElementById("loader");
+        const messageElement = document.getElementById("message");
+
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+            console.log("Connected");
+
+            stompClient.subscribe('/topic/notifications/1', function (response) {
+
+                const data = JSON.parse(response.body);
+
+                // Hide loader
+                loader.style.display = "none";
+
+                // Show message
+                messageElement.textContent =
+                    "Title: " + data.title + " | Message: " + data.message + " | Status: " + data.status;
+            });
+        });
+    </script>
+
+</body>
+
+</html>
