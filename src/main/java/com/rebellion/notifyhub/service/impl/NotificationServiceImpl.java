@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class NotificationServiceImpl implements NotificationService{
 
 	private final UserRepo userRepo;
 	private final NotificationRepo notificationRepo;
+	private final SimpMessagingTemplate messagingTemplate;
 	
 	@Override
 	public void createNotification(NotificationEvent event) {
@@ -98,11 +100,10 @@ public class NotificationServiceImpl implements NotificationService{
 	}
 
 	private void sendPush(Notification notification) {
-		// TODO replace with websocket push
-		log.info(
-			"Sending push to userId {}: {}",
-			notification.getUser().getId(),
-			notification.getMessage()
+		NotificationResponseDto response = toResponseDto(notification);
+		messagingTemplate.convertAndSend(
+			"/topic/notifications/" + notification.getUser().getId(),
+			response
 		);
 	}
 
