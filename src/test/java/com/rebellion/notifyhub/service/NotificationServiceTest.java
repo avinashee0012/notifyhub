@@ -68,7 +68,7 @@ class NotificationServiceTest {
 		when(userRepo.existsById(1L)).thenReturn(true);
 		when(notificationRepo.findByUserId(1L, pageable)).thenReturn(page);
 
-		Page<NotificationResponseDto> result = notificationService.getNotifications(1L, pageable);
+		Page<NotificationResponseDto> result = notificationService.getNotifications(1L, 0, 10);
 
 		assertEquals(1, result.getTotalElements());
 		assertEquals("New Event", result.getContent().get(0).getTitle());
@@ -81,7 +81,7 @@ class NotificationServiceTest {
 		when(userRepo.existsById(1L)).thenReturn(true);
 		when(notificationRepo.findByUserIdAndStatus(1L, NotificationStatus.SENT, pageable)).thenReturn(page);
 
-		Page<NotificationResponseDto> result = notificationService.getUnreadNotifications(1L, pageable);
+		Page<NotificationResponseDto> result = notificationService.getUnreadNotifications(1L, 0, 10);
 
 		assertEquals(1, result.getContent().size());
 		assertEquals(10L, result.getContent().get(0).getId());
@@ -102,7 +102,7 @@ class NotificationServiceTest {
 	void shouldThrowWhenUserMissingForNotificationLookup() {
 		when(userRepo.existsById(99L)).thenReturn(false);
 
-		assertThrows(EntityNotFoundException.class, () -> notificationService.getNotifications(99L, pageable));
+		assertThrows(EntityNotFoundException.class, () -> notificationService.getNotifications(99L, 0, 10));
 
 		verify(notificationRepo, never()).findByUserId(any(), any());
 	}

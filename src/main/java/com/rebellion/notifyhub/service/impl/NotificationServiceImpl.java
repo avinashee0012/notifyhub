@@ -3,7 +3,9 @@ package com.rebellion.notifyhub.service.impl;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,19 +42,21 @@ public class NotificationServiceImpl implements NotificationService{
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<NotificationResponseDto> getNotifications(Long userId, Pageable pageable) {
+	public Page<NotificationResponseDto> getNotifications(Long userId, int page, int size) {
 		if (!userRepo.existsById(userId)) {
 			throw new EntityNotFoundException("User not found");
 		}
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		return notificationRepo.findByUserId(userId, pageable).map(this::toResponseDto);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public Page<NotificationResponseDto> getUnreadNotifications(Long userId, Pageable pageable) {
+	public Page<NotificationResponseDto> getUnreadNotifications(Long userId, int page, int size) {
 		if (!userRepo.existsById(userId)) {
 			throw new EntityNotFoundException("User not found");
 		}
+		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 		return notificationRepo.findByUserIdAndStatus(userId, NotificationStatus.SENT, pageable).map(this::toResponseDto);
 	}
 

@@ -1,8 +1,6 @@
 package com.rebellion.notifyhub.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,17 +24,21 @@ public class NotificationController {
 	@GetMapping
 	public ResponseEntity<Page<NotificationResponseDto>> getNotifications(
 		@RequestParam Long userId,
-		@PageableDefault(size = 10, sort = "createdAt") Pageable pageable
+		@RequestParam(defaultValue = "0") int page,
+    	@RequestParam(defaultValue = "10") int size
 	) {
-		return ResponseEntity.ok(notificationService.getNotifications(userId, pageable));
+		size = Math.max(size, 50); // to prevent abuse
+		return ResponseEntity.ok(notificationService.getNotifications(userId, page, size));
 	}
 
 	@GetMapping("/unread")
 	public ResponseEntity<Page<NotificationResponseDto>> getUnreadNotifications(
 		@RequestParam Long userId,
-		@PageableDefault(size = 10, sort = "createdAt") Pageable pageable
+		@RequestParam(defaultValue = "0") int page,
+    	@RequestParam(defaultValue = "10") int size
 	) {
-		return ResponseEntity.ok(notificationService.getUnreadNotifications(userId, pageable));
+		size = Math.max(size, 50);
+		return ResponseEntity.ok(notificationService.getUnreadNotifications(userId, page, size));
 	}
 
 	@PatchMapping("/{notificationId}/read")

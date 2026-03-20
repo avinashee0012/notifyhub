@@ -1,7 +1,6 @@
 package com.rebellion.notifyhub.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,7 +45,7 @@ class NotificationControllerTest {
 			NotificationStatus.SENT,
 			LocalDateTime.of(2026, 3, 19, 10, 0)
 		);
-		when(notificationService.getNotifications(eq(5L), any()))
+		when(notificationService.getNotifications(eq(5L), anyInt(), anyInt()))
 			.thenReturn(new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1));
 
 		mockMvc.perform(get("/api/notifications").param("userId", "5"))
@@ -55,7 +54,7 @@ class NotificationControllerTest {
 			.andExpect(jsonPath("$.content[0].title").value("Welcome"))
 			.andExpect(jsonPath("$.content[0].status").value("SENT"));
 
-		verify(notificationService).getNotifications(eq(5L), any());
+		verify(notificationService).getNotifications(eq(5L), anyInt(), anyInt());
 	}
 
 	@Test
@@ -69,7 +68,7 @@ class NotificationControllerTest {
 			NotificationStatus.SENT,
 			LocalDateTime.of(2026, 3, 19, 10, 5)
 		);
-		when(notificationService.getUnreadNotifications(eq(5L), any()))
+		when(notificationService.getUnreadNotifications(eq(5L), anyInt(), anyInt()))
 			.thenReturn(new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1));
 
 		mockMvc.perform(get("/api/notifications/unread").param("userId", "5"))
@@ -77,7 +76,7 @@ class NotificationControllerTest {
 			.andExpect(jsonPath("$.content[0].id").value(2))
 			.andExpect(jsonPath("$.content[0].message").value("Please review"));
 
-		verify(notificationService).getUnreadNotifications(eq(5L), any());
+		verify(notificationService).getUnreadNotifications(eq(5L), anyInt(), anyInt());
 	}
 
 	@Test
