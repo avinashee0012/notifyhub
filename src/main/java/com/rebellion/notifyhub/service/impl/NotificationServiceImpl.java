@@ -7,6 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +30,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class NotificationServiceImpl implements NotificationService{
+public class NotificationServiceImpl implements NotificationService {
 
 	private final UserRepo userRepo;
 	private final NotificationRepo notificationRepo;
 	private final SimpMessagingTemplate messagingTemplate;
-	
+
 	@Override
 	public void createNotification(NotificationEvent event) {
 		User user = userRepo.findById(event.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -63,8 +66,7 @@ public class NotificationServiceImpl implements NotificationService{
 	@Override
 	@Transactional
 	public NotificationResponseDto markAsRead(Long notificationId) {
-		Notification notification = notificationRepo.findById(notificationId)
-			.orElseThrow(() -> new EntityNotFoundException("Notification not found"));
+		Notification notification = notificationRepo.findById(notificationId).orElseThrow(() -> new EntityNotFoundException("Notification not found"));
 		notification.markRead();
 		return toResponseDto(notification);
 	}
@@ -78,8 +80,7 @@ public class NotificationServiceImpl implements NotificationService{
 				processNotification(notification);
 				notification.markSent();
 			} catch (Exception e) {
-				log.info("Unable to send notification to " + notification.getUser().getEmail());
-				notification.markFailed();
+				log.error("Processing failed, rety will handle it");
 			}
 		}
 	}
@@ -87,39 +88,36 @@ public class NotificationServiceImpl implements NotificationService{
 	// HELPER METHODS
 	private void processNotification(Notification notification) {
 		NotificationPreference preference = notification.getUser().getPreference();
-		if(preference == null){
+		if (preference == null) {
 			throw new EntityNotFoundException("Preference not found");
 		}
-		if(preference.isEmailEnabled()) sendEmail(notification);
-		if(preference.isPushEnabled()) sendPush(notification);
+		if (preference.isEmailEnabled())
+			sendEmail(notification);
+		if (preference.isPushEnabled())
+			sendPush(notification);
 	}
 
+	@Retryable(retryFor = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000))
 	private void sendEmail(Notification notification) {
-		// TODO replace with email service
-		log.info(
-			"Sending email to {}: {}",
-			notification.getUser().getEmail(),
-			notification.getMessage()
-		);
+		// TODO can be replaced to email service
+		log.info("Sending email to {}: {}", notification.getUser().getEmail(), notification.getMessage());
+		// simulate failure for testing
+		if (Math.random() < 0.5)
+			throw new RuntimeException("Email failed");
+	}
+
+	@Recover
+	private void recoverEmail(Exception e, Notification notification) {
+		log.error("Email permanently failed for {}", notification.getUser().getEmail());
+		notification.markFailed();
 	}
 
 	private void sendPush(Notification notification) {
 		NotificationResponseDto response = toResponseDto(notification);
-		messagingTemplate.convertAndSend(
-			"/topic/notifications/" + notification.getUser().getId(),
-			response
-		);
+		messagingTemplate.convertAndSend("/topic/notifications/" + notification.getUser().getId(), response);
 	}
 
 	private NotificationResponseDto toResponseDto(Notification notification) {
-		return new NotificationResponseDto(
-			notification.getId(),
-			notification.getUser().getId(),
-			notification.getTitle(),
-			notification.getMessage(),
-			notification.getType(),
-			notification.getStatus(),
-			notification.getCreatedAt()
-		);
+		return new NotificationResponseDto(notification.getId(), notification.getUser().getId(), notification.getTitle(), notification.getMessage(), notification.getType(), notification.getStatus(), notification.getCreatedAt());
 	}
 }
