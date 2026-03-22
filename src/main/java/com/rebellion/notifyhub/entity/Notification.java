@@ -38,15 +38,19 @@ public class Notification extends BaseEntity {
     private String message;
     
     private String type;
+
+	@Column(unique = true)
+	private Long eventId;
     
     @Enumerated(EnumType.STRING)
     private NotificationStatus status = NotificationStatus.PENDING;
 
-    public Notification(User user, String title, String message, String type) {
+    public Notification(User user, String title, String message, String type, Long eventId) {
         this.user = user;
         this.title = title;
         this.message = message;
         this.type = type;
+		this.eventId = eventId;
     }
 
 	// SETTERS

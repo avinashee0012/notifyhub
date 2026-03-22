@@ -19,6 +19,7 @@ import com.rebellion.notifyhub.entity.NotificationEvent;
 import com.rebellion.notifyhub.entity.NotificationPreference;
 import com.rebellion.notifyhub.entity.User;
 import com.rebellion.notifyhub.entity.enums.NotificationStatus;
+import com.rebellion.notifyhub.exception.CustomDuplicatEntryException;
 import com.rebellion.notifyhub.repository.NotificationRepo;
 import com.rebellion.notifyhub.repository.UserRepo;
 import com.rebellion.notifyhub.service.NotificationService;
@@ -38,8 +39,10 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void createNotification(NotificationEvent event) {
+		if (notificationRepo.existsByEventId(event.getEventId()))
+			throw new CustomDuplicatEntryException("Duplicate event received: " + event.getEventId());
 		User user = userRepo.findById(event.getUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-		Notification notification = new Notification(user, "New Event: " + event.getEventType(), event.getPayload(), event.getEventType());
+		Notification notification = new Notification(user, "New Event: " + event.getEventType(), event.getPayload(), event.getEventType(), event.getEventId());
 		notificationRepo.save(notification);
 	}
 

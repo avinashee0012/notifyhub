@@ -51,7 +51,7 @@ public class NotificationEventServiceTest {
 
 	@BeforeEach
 	void setup() {
-		request = new NotificationEventRequestDto("JOB_SHORTLISTED", 1L, Map.of("jobTitle", "Backend Engineer"));
+		request = new NotificationEventRequestDto("JOB_SHORTLISTED", 1L, Map.of("jobTitle", "Backend Engineer"), 100L);
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class NotificationEventServiceTest {
 
 		when(userRepo.existsById(anyLong())).thenReturn(true);
 
-		NotificationEvent savedEvent = new NotificationEvent("JOB_SHORTLISTED", 1L, "{\"jobTitle\":\"Backend Engineer\"}");
+		NotificationEvent savedEvent = new NotificationEvent("JOB_SHORTLISTED", 100L, 1L, "{\"jobTitle\":\"Backend Engineer\"}");
 
 		when(notificationEventRepo.save(any(NotificationEvent.class))).thenReturn(savedEvent);
 
@@ -92,7 +92,7 @@ public class NotificationEventServiceTest {
 
 		when(userRepo.existsById(anyLong())).thenReturn(true);
 
-		NotificationEvent savedEvent = new NotificationEvent("JOB_SHORTLISTED", 1L, "{\"jobTitle\":\"Backend Engineer\"}");
+		NotificationEvent savedEvent = new NotificationEvent("JOB_SHORTLISTED", 100L, 1L, "{\"jobTitle\":\"Backend Engineer\"}");
 
 		when(notificationEventRepo.save(any(NotificationEvent.class))).thenReturn(savedEvent);
 
@@ -107,7 +107,7 @@ public class NotificationEventServiceTest {
 
 		when(userRepo.existsById(anyLong())).thenReturn(true);
 
-		NotificationEvent savedEvent = new NotificationEvent("JOB_SHORTLISTED", 1L, "{\"jobTitle\":\"Backend Engineer\"}");
+		NotificationEvent savedEvent = new NotificationEvent("JOB_SHORTLISTED", 100L, 1L, "{\"jobTitle\":\"Backend Engineer\"}");
 
 		when(notificationEventRepo.save(any(NotificationEvent.class))).thenReturn(savedEvent);
 

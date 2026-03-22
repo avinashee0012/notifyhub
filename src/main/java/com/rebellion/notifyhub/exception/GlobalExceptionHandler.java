@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(response);
     }
 
-	@ExceptionHandler({IllegalStateException.class})
+	@ExceptionHandler({IllegalStateException.class, CustomDuplicatEntryException.class})
     public ResponseEntity<ErrorResponseDto> handleConflictException(Exception ex, HttpServletRequest request){
         HttpStatus status = HttpStatus.CONFLICT;
         ErrorResponseDto response = new ErrorResponseDto(status, ex.getMessage(), request);

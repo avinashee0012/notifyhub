@@ -54,7 +54,7 @@ class NotificationServiceTest {
 		user = new User("test@example.com", "Test User");
 		ReflectionTestUtils.setField(user, "id", 1L);
 
-		sentNotification = new Notification(user, "New Event", "Payload", "JOB_SHORTLISTED");
+		sentNotification = new Notification(user, "New Event", "Payload", "JOB_SHORTLISTED", 100L);
 		ReflectionTestUtils.setField(sentNotification, "id", 10L);
 		ReflectionTestUtils.setField(sentNotification, "status", NotificationStatus.SENT);
 		ReflectionTestUtils.setField(sentNotification, "createdAt", LocalDateTime.of(2026, 3, 19, 10, 0));
@@ -116,7 +116,7 @@ class NotificationServiceTest {
 
 	@Test
 	void shouldThrowWhenMarkReadCalledForPendingNotification() {
-		Notification pendingNotification = new Notification(user, "Pending", "Payload", "SYSTEM");
+		Notification pendingNotification = new Notification(user, "Pending", "Payload", "SYSTEM", 100L);
 		ReflectionTestUtils.setField(pendingNotification, "id", 12L);
 		when(notificationRepo.findById(12L)).thenReturn(Optional.of(pendingNotification));
 

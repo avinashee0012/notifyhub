@@ -22,4 +22,7 @@ public class NotificationEventRequestDto {
 
     @NotEmpty(message = "Payload cannot be empty")
     private Map<String, Object> payload;
+
+	@NotBlank(message = "eventId is required")
+    private Long eventId; // for idempotency
 }

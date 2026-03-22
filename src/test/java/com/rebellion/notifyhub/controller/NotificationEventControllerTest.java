@@ -38,7 +38,7 @@ class NotificationEventControllerTest {
 
 	@BeforeEach
 	void setup() {
-		request = new NotificationEventRequestDto("JOB_SHORTLISTED", 12L, Map.of("jobTitle", "Backend Engineer"));
+		request = new NotificationEventRequestDto("JOB_SHORTLISTED", 12L, Map.of("jobTitle", "Backend Engineer"), 100L);
 	}
 
 	@Test
@@ -61,7 +61,8 @@ class NotificationEventControllerTest {
 				  "userId": 12,
 				  "payload": {
 				    "jobTitle": "Backend Engineer"
-				  }
+				  },
+				  "eventId": 100
 				}
 				""";
 
@@ -69,13 +70,14 @@ class NotificationEventControllerTest {
 	}
 
 	@Test
-	void createEventShouldReturnBadRequest_whenEventTypeMissing() throws Exception {
+	void createEventShouldReturnBadRequestWhenEventTypeMissing() throws Exception {
 		String body = """
 				{
 				  "userId": 12,
 				  "payload": {
 				    "jobTitle": "Backend Engineer"
-				  }
+				  },
+				  "eventId": 100
 				}
 				""";
 
@@ -83,11 +85,12 @@ class NotificationEventControllerTest {
 	}
 
 	@Test
-	void createEventShouldReturnBadRequest_whenPayloadMissing() throws Exception {
+	void createEventShouldReturnBadRequestWhenPayloadMissing() throws Exception {
 		String body = """
 				{
 				  "eventType": "JOB_SHORTLISTED",
-				  "userId": 12
+				  "userId": 12,
+				  "eventId": 100
 				}
 				""";
 

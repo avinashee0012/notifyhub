@@ -7,4 +7,5 @@ import com.rebellion.notifyhub.entity.NotificationEvent;
 
 @Repository
 public interface NotificationEventRepo extends JpaRepository<NotificationEvent, Long>{
+	boolean existsByEventId(Long eventId);
 }
